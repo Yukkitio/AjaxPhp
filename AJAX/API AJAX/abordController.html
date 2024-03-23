@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+
+  <div>
+    <h2>BORED API >-> AJAX</h2>
+    <button type="button" onclick="displayActivity()">Change activity</button>
+    <button id="cancelButton">Annuler la requête</button>
+  </div>
+
+  <div id="result">
+  </div>
+
+
+  <script>
+    const divResult = document.getElementById("result");
+    const cancelButton = document.getElementById("cancelButton");
+
+    const baseEndpoint = "https://www.boredapi.com/api/";
+    const activityEndpoint = `${baseEndpoint}activity/`;
+
+    const controller = new AbortController();
+    const signalConst = controller.signal;
+
+    async function displayActivity() {
+      try {
+        divResult.innerHTML = "loading...";
+
+        const response = await fetch(activityEndpoint, {signalConst});
+        const data = await response.json();
+
+        divResult.textContent = `${data.activity} - ${data.type}`;
+
+      } catch (e) {
+        if (e.name == 'AbortError') {
+          alert("Annulé !");
+        } else {
+          console.log("-------- API REQUEST ERROR --------\n", e);
+          divResult.textContent = `Aie l'api ne repond pas ! -> ${e}`;
+        }
+      }
+    }
+
+    cancelButton.addEventListener('click', () => {
+      controller.abort();
+      console.log('Requête annulée par l\'utilisateur.');
+    });
+
+  </script>
+
+
+  </body>
+</html>
+
+<!-- Avoir un serveur Apache, Wamp, TomCat obligé a cause de CORS -->
