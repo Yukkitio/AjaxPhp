@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+
+  <div>
+    <h2>BORED API >-> AJAX</h2>
+    <button type="button" onclick="displayActivity()">Change activity</button>
+  </div>
+
+  <div id="result">
+  </div>
+
+
+  <script>
+    const baseEndpoint = "https://www.boredapi.com/api/";
+    const activityEndpoint = `${baseEndpoint}activity/`;
+    const divResult = document.getElementById("result");
+
+    async function displayActivity() {
+      try {
+        divResult.innerHTML = "loading...";
+
+        const response = await fetch(activityEndpoint);
+        const data = await response.json();
+
+        divResult.textContent = `${data.activity} - ${data.type}`;
+
+      } catch (e) {
+        console.log("-------- API REQUEST ERROR --------");
+        console.log(e);
+        divResult.textContent = `Aie l'api ne repond pas ! -> ${e}`;
+      }
+    }
+  </script>
+
+
+  </body>
+</html>
+
+<!-- Avoir un serveur Apache, Wamp, TomCat obligé a cause de CORS -->

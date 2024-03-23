@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+
+  <div>
+    <h2>BORED API >-> AJAX</h2>
+    <button type="button" onclick="loadDoc()">Change Content</button>
+  </div>
+
+  <div id="result">
+  </div>
+
+
+  <script>
+    function handleError(err) {
+      console.log("OH NO!");
+      console.log(err);
+    }
+
+    const showDiv = document.getElementById("result");
+    const endpoint = "https://www.boredapi.com/api/activity/";
+    const wesPromise = fetch(endpoint);
+
+    wesPromise
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        console.log(data.activity);
+        console.log(data.type);
+        console.log(data.participants);
+        console.log(data.price);
+        console.log(data.link);
+        console.log(data.key);
+        console.log(data.accessibility);
+        showDiv.innerHTML = `${data.activity} - ${data.type}`;
+      })
+      .catch(handleError);
+
+
+    
+  </script>
+
+
+  </body>
+</html>
+
+<!-- Avoir un serveur Apache, Wamp, TomCat obligé a cause de CORS -->
