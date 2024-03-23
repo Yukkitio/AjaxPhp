@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+
+  <div>
+    <h2>Let AJAX change this text</h2>
+    <button type="button" onclick="loadDoc()">Change Content</button>
+  </div>
+
+  <div id="result">
+  </div>
+
+
+  <script>
+    function loadDoc() {
+      const xhttp = new XMLHttpRequest();
+      xhttp.onload = function() {
+        let res = this.responseText.replace(".", '</br>');
+        document.getElementById("result").innerHTML = res;
+        }
+      xhttp.open("GET", "infos.txt", true);
+      xhttp.send();
+    }
+  </script>
+
+
+  </body>
+</html>
+
+<!-- Avoir un serveur Apache, Wamp, TomCat obligé a cause de CORS -->
