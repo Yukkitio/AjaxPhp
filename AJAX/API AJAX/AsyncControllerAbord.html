@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <body>
+
+  <div>
+    <h2>BORED API >-> AJAX</h2>
+    <button type="button" onclick="displayActivity()">Change activity</button>
+    <button id="cancelButton">Annuler la requête</button>
+  </div>
+
+  <div id="result">
+  </div>
+
+  <script>
+    const divResult = document.getElementById("result");
+    const cancelButton = document.getElementById("cancelButton");
+
+    const baseEndpoint = "https://www.boredapi.com/api/";
+    const activityEndpoint = `${baseEndpoint}activity/`;
+
+    // Contrôleur d'annulation pour les requêtes fetch
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const statusConfig = {
+      200: (data) => divResult.textContent = `${data.activity} - ${data.type}`,
+      404: () => divResult.textContent = "404 - Pas de donnée trouvée.",
+      500: () => divResult.textContent = "500 - Erreur interne du serveur.",
+      default: (status) => divResult.textContent = `Statut non géré : ${status}`,
+    };
+
+    function delay(time) {
+      return new Promise(resolve => setTimeout(resolve, time));
+    }
+
+    async function displayActivity() {
+      try {
+        divResult.textContent = "Loading...";
+        await delay(3000); // Debug delay
+
+        const response = await fetch(activityEndpoint, { signal });
+
+        // Traiter la réponse indépendamment de son statut
+        const handleResponse = statusConfig[response.status] || statusConfig.default;
+        
+        if(response.ok) {
+          const data = await response.json();
+          handleResponse(data); // statut 200
+        } else {
+          handleResponse(response.status); // Autres statuts ou erreurs
+        }
+      } catch (e) {
+        if (e.name === 'AbortError') {
+          divResult.textContent = "Requête annulée par l'utilisateur.";
+        } else {
+          console.error("Erreur lors de la requête:", e);
+          divResult.textContent = `Erreur lors de la récupération des données: ${e.message}`;
+        }
+      }
+    }
+
+    cancelButton.addEventListener('click', () => {
+      controller.abort();
+      divResult.textContent = "Annulation de la requête ...";
+    });
+  </script>
+
+  </body>
+
+</html>
