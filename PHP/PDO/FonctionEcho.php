@@ -25,32 +25,49 @@
     $pdo = new PDO($con, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $selectOption = $_POST['operator'] ?? "--";
-
+    
     if ($selectOption != "--") {
-      echo "<table border='1'>";
-
       if ($selectOption != "All") {
         $sql = "SELECT $selectOption FROM users";
-        echo "<tr><th>$selectOption</th></tr>";
       } else {
         $sql = "SELECT * FROM users";
-        echo "<tr><th>Nom</th><th>Prenom</th><th>Age</th></tr>";
       }
-      
-      $stmt = $pdo->prepare($sql);// Préparation de la requête
-      $stmt->execute();
 
-      while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        if ($selectOption != "All") {
-          echo "<tr><td>{$row[$selectOption]}</td></tr>";
-        } else {
-          echo "<tr><td>{$row['Nom']}</td><td>{$row['Prenom']}</td><td>{$row['Age']}</td></tr>";
-        }
-      }
-      echo "</table>";
+      $stmt = $pdo->prepare($sql); // Préparation de la requête
+      $stmt->execute();
+      $results = $stmt->fetchAll(PDO::FETCH_ASSOC);// On fetchall pour tout avoir directement pour par la suite l'afficher
     }
+
+    echoTable($results ?? False);
 
   } catch (PDOException $e) {
     die("Erreur de connexion à la base de données: " . $e->getMessage());
   }
+
+  function echoTable($results) {
+    if(!$results) {
+        echo "Aucun résultats à afficher !";
+    } else {        
+      echo "<table border='1'>";
+      $firstRow = true; // Utilisation comme d'une balise pour entete tableau
+
+      foreach($results as $row) {
+        if ($firstRow) {
+          echo "<tr>";
+          foreach(array_keys($row) as $header) {
+            echo "<th>$header</th>"; // Titre dans le tableau
+          }
+          echo "</tr>";
+          $firstRow = false; // On uncheck pour passer a la suite
+        }
+        echo "<tr>";
+        foreach($row as $cell) {
+          echo "<td>$cell</td>"; // Affichage des données
+        }
+        echo "</tr>";
+      }
+      echo "</table>";
+    } 
+  }
+
 ?>
