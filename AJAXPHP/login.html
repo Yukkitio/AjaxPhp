@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>AjaxPhp</title>
+  </head>
+
+
+  <body>
+
+  <h2>Login</h2>
+  <form onsubmit="submitFormLogin(event)">
+    <input type="text" id="Loginname" name="name" required>
+    </br>
+    <input type="password" id="Loginpwd" name="pwd" required>
+    </br>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <h2>Register</h2>
+  <form onsubmit="submitFormRegister(event)">
+    <input type="text" id="Registername" name="name" required>
+    </br>
+    <input type="password" id="Registerpwd" name="pwd" required>
+    <input type="password" id="Registerpwd2" name="pwd2" required>
+    </br>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <div id="responseText"></div>
+
+  <script>
+    function submitFormLogin(event) {
+      event.preventDefault(); // Stop le rechargement de la page
+
+      var name = document.getElementById('Loginname').value;
+      var pwd = document.getElementById('Loginpwd').value;
+      var data = {
+        type: true, // true = Login | false = Register
+        name: name,
+        pwd : pwd
+      };
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open("POST", "server.php", true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            window.location.href = "index.php"; // Redirection client side en JS
+          } else {
+            document.getElementById('responseText').innerHTML = response.error;
+          }
+        }
+      };
+
+      xhr.send(JSON.stringify(data));
+    }
+
+
+    function submitFormRegister(event) {
+      event.preventDefault(); // Stop le rechargement de la page
+
+      var name = document.getElementById('Registername').value;
+      var pwd = document.getElementById('Registerpwd').value;
+      var pwd2 = document.getElementById('Registerpwd2').value;
+      if (pwd === pwd2) {
+        var data = {
+          type: false,
+          name: name,
+          pwd : pwd
+        };
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("POST", "server.php", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        xhr.onload = function() {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            document.getElementById('responseText').innerHTML = xhr.responseText;
+            document.getElementById('Registername').value = '';
+            document.getElementById('Registerpwd').value = '';
+            document.getElementById('Registerpwd2').value = '';
+          }
+        };
+        xhr.send(JSON.stringify(data));
+      } else {
+        document.getElementById('Registerpwd').value = ''
+        document.getElementById('Registerpwd2').value = ''
+        document.getElementById('responseText').innerHTML = "Les mot de passe ne corresponde pas";
+      }
+    }
+  </script>
+  </body>
+</html>

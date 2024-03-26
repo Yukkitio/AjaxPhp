@@ -1,5 +1,10 @@
 <!DOCTYPE HTML>
-<html>  
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Php</title>
+  </head>
+  
   <body>
     <form method="POST">
       <select name="operator" onchange="this.form.submit()">
